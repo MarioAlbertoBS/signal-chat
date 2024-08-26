@@ -1,0 +1,15 @@
+{
+  "name": "chat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "dotnet test",
+    "dev": "docker-compose up --build"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
