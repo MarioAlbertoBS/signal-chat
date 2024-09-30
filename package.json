@@ -7,7 +7,8 @@
   },
   "scripts": {
     "test": "dotnet test",
-    "dev": "docker-compose up --build"
+    "dev": "docker-compose up --build -d",
+    "seed": "dotnet run --connection-string \"Server=localhost,1433;Database=Chat;User=sa;Password=DevelpmentP@ssword!;TrustServerCertificate=True;\" seed"
   },
   "author": "",
   "license": "ISC",

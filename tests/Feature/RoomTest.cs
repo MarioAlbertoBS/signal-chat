@@ -1,8 +1,13 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Headers;
+using Chat.Data;
 using Chat.Data.Dtos;
 using Chat.Models;
 using Chat.Tests.Feature;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Chat.Tests.Feature;
@@ -18,7 +23,7 @@ public class RoomTest : Test
     public async Task CreateRoom(string roomName) {
         string token = await GenerateLoginToken("User", "Password123!");
 
-        RoomRequestDto requestDto = new RoomRequestDto {
+        RoomCreateRequestDto requestDto = new RoomCreateRequestDto {
             Name = roomName,
         };
 
@@ -29,12 +34,16 @@ public class RoomTest : Test
 
         response.EnsureSuccessStatusCode();
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+        var responseData = await GetResponseContent<RoomCreateResponseDto>(response);
+
+        Assert.Equal(responseData.Name, roomName);
     }
 
     [Theory]
     [InlineData("Test")]
     public async Task JoinRoom(string roomName) {
-        string token = await GenerateLoginToken("User", "Password123!");
+        AuthenticateAs("Mario", "Password123!");
 
         Room room = new Room {
             Name = roomName
@@ -48,9 +57,16 @@ public class RoomTest : Test
             UserId = _authenticatedUser.Id
         };
         var body = GenerateBodyRequest(requestDto);
-        var response = await _client.PostAsync($"/api/rooms/{room.Id}/join", body);
+        string url = $"/api/rooms/{room.Id}/join";
+        var response = await _client.PostAsync($"/api/rooms/{room.Name}/join", body);
 
         response.EnsureSuccessStatusCode();
+
+        var responseData = await GetResponseContent<JoinRoomResponseDto>(response);
+
+        Assert.True(responseData.Status);
+        Assert.Equal(room.Id, responseData.RoomId);
+        Assert.Equal(_authenticatedUser.Id, responseData.UserId);
     }
 
     [Theory]
@@ -80,5 +96,17 @@ public class RoomTest : Test
         var response = await _client.PostAsync($"/api/rooms/{room.Id}/leave", body);
 
         response.EnsureSuccessStatusCode();
+    }
+
+    [Fact]
+    public async Task TestGenerateToken() {
+        string token = await GenerateLoginToken("Mario", "Password123!");
+
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(token);
+
+        foreach(var claim in jwtToken.Claims) {
+            Console.WriteLine($"{claim.Type}: {claim.Value}");
+        }
     }
 }

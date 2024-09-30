@@ -32,8 +32,7 @@ public class LoginTest : Test
         
         Assert.NotNull(response.Content);
 
-        string responseString = await response.Content.ReadAsStringAsync();
-        var responseObject = JsonConvert.DeserializeObject<UserRegisterResponseDto>(responseString);
+        var responseObject = await GetResponseContent<UserRegisterResponseDto>(response);
 
         Assert.NotNull(responseObject);
         Assert.Equal(userLoginDto.UserName, responseObject.UserName);
@@ -57,22 +56,6 @@ public class LoginTest : Test
         
         HttpResponseMessage response = await _client.PostAsync("/api/login", content);
 
-        response.EnsureSuccessStatusCode();
-    }
-
-    [Theory]
-    [InlineData("MarioB", "Password123@!")]
-    public async Task HelloWorkAuthenticated(string userName, string password) {
-        // Create user
-        User testUser = await GenerateUser(userName, password);
-        Assert.NotNull(testUser);
-
-        // Login User to generate token
-        string token = await GenerateLoginToken(userName, password);
-        Assert.NotEmpty(token);
-
-        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        HttpResponseMessage response = await _client.GetAsync("/api/hello-world");
         response.EnsureSuccessStatusCode();
     }
 }

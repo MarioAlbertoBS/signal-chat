@@ -1,5 +1,6 @@
 using System.Text;
 using Chat.Data;
+using Chat.Data.Repositories;
 using Chat.Models;
 using Chat.Services;
 using Chat.Services.Messages;
@@ -34,13 +35,36 @@ builder.Services.AddAuthentication(options => {
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? ""))
     };
+    options.MapInboundClaims = true;
 });
 
 builder.Services.AddSignalR();
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<RoomRepository>();
+builder.Services.AddScoped<MessageRepository>();
 
 var app = builder.Build();
+
+// Run seeder
+if (args.Contains("seed")) {
+    using (var scope = app.Services.CreateScope()) {
+        var services = scope.ServiceProvider;
+
+        builder.Configuration["ConnectionStrings:DefaultConnection"] = "Server=localhost,1433;Database=Chat;User=sa;Password=DevelpmentP@ssword!;TrustServerCertificate=True;";
+
+        try {
+            var context = services.GetRequiredService<ChatContext>();
+
+            await Seeder.Seed(context);
+        } catch (Exception ex) {
+            Console.WriteLine($"Error Executing Seeder: {ex.Message}");
+        }
+    }
+
+    return;
+}
 
 // Migrate database
 // using (var scope = app.Services.CreateScope()) {
@@ -63,6 +87,7 @@ app.MapControllerRoute(
     pattern: "api/{controller=Home}/{action=Index}/{id?}"
 )
 .WithOpenApi();
+
 app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

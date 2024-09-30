@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chat.Migrations
 {
     [DbContext(typeof(ChatContext))]
-    [Migration("20240814230623_InitialCreate")]
+    [Migration("20240828231352_Initial Create")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -37,8 +37,9 @@ namespace Chat.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
+                    b.Property<string>("RoomId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("SentAt")
                         .HasColumnType("datetime2");
@@ -64,8 +65,9 @@ namespace Chat.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
+                    b.Property<string>("RoomId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -82,22 +84,17 @@ namespace Chat.Migrations
 
             modelBuilder.Entity("Chat.Models.Room", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("RoomId")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoomId");
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Rooms");
                 });
@@ -303,7 +300,7 @@ namespace Chat.Migrations
             modelBuilder.Entity("Chat.Models.Message", b =>
                 {
                     b.HasOne("Chat.Models.Room", "Room")
-                        .WithMany()
+                        .WithMany("Messages")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -336,13 +333,6 @@ namespace Chat.Migrations
                     b.Navigation("Room");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Chat.Models.Room", b =>
-                {
-                    b.HasOne("Chat.Models.Room", null)
-                        .WithMany("Rooms")
-                        .HasForeignKey("RoomId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -398,9 +388,9 @@ namespace Chat.Migrations
 
             modelBuilder.Entity("Chat.Models.Room", b =>
                 {
-                    b.Navigation("Participants");
+                    b.Navigation("Messages");
 
-                    b.Navigation("Rooms");
+                    b.Navigation("Participants");
                 });
 #pragma warning restore 612, 618
         }

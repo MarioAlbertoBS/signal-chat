@@ -8,7 +8,8 @@ WORKDIR /app
 COPY *.csproj ./
 RUN dotnet restore
 
-# Run migrations
+# Run seeder
+RUN dotnet run seed
 
 # Copy source code
 COPY . ./
@@ -28,9 +29,6 @@ COPY --from=build /app/out ./
 
 # Expose port 80
 EXPOSE 80
-
-# Run migrations
-ENTRYPOINT ["dotnet", "Chat.dll", "database update"]
 
 # Set entry point
 ENTRYPOINT ["dotnet", "Chat.dll"]

@@ -13,7 +13,7 @@ connection.start().then(function () {
     console.log("Connected to SignalR");
 
     connection.invoke("JoinRoom", "1").catch(function (err) {
-        return HTMLFormControlsCollection.error(err.toString());
+        console.error(err.toString());
     })
 }).catch(function (err) {
     return console.error(err.toString());
