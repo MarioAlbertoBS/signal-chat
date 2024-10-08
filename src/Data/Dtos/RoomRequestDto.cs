@@ -23,3 +23,8 @@ public class JoinRoomResponseDto
     public string RoomId { get; set; } = String.Empty;
     public string UserId { get; set; } = String.Empty;
 }
+
+public class RoomMessagesResponseDto
+{
+    public IEnumerable<MessageResponseDto> Messages { get; set; }
+}

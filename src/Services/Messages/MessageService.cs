@@ -1,4 +1,5 @@
 
+using Chat.Data.Dtos;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Chat.Services.Messages;
@@ -21,7 +22,7 @@ public class MessageService : IMessageService
         throw new NotImplementedException();
     }
 
-    public async Task SendMessageAsync(string roomName, string message)
+    public async Task SendMessageAsync(string roomName, MessageResponseDto message)
     {
         await _hubContext.Clients.Group(roomName).SendAsync(ChatHub.MessageEvent, message);
     }

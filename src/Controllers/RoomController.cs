@@ -23,6 +23,21 @@ public class RoomController : ControllerBase
         _httpContextAccessor = httpContextAccessor;
     }
 
+    [HttpGet]
+    [Authorize]
+    [Route("{roomName}/messages")]
+    public async Task<IActionResult> RoomMessages(string roomName) {
+        // Search the room exists
+        var room = await _roomRepository.GetByName(roomName);
+        if (room == null) {
+            return NotFound(new { Message = "The Room does not exists" });
+        }
+
+        var messages = await _roomRepository.GetMessages(room);
+
+        return Ok(new RoomMessagesResponseDto { Messages = messages });
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> Create(RoomCreateRequestDto roomCreateRequestDto) {

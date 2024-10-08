@@ -1,3 +1,4 @@
+using Chat.Data.Dtos;
 using Chat.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -48,5 +49,19 @@ public class RoomRepository
         }
 
         return true;
+    }
+
+    public async Task<List<MessageResponseDto>> GetMessages(Room room) {
+        var messages = _context.Messages
+            .Where(message => message.Room == room)
+            .Select(message => new MessageResponseDto {
+                Id = message.Id,
+                User = message.User.UserName,
+                CreatedAt = message.SentAt.ToString("yyyy-MM-dd HH:mm:ss"),
+                Message = message.Body
+            })
+            .ToList();
+
+        return messages;
     }
 }

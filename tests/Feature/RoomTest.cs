@@ -98,15 +98,29 @@ public class RoomTest : Test
         response.EnsureSuccessStatusCode();
     }
 
-    [Fact]
-    public async Task TestGenerateToken() {
-        string token = await GenerateLoginToken("Mario", "Password123!");
+    [Theory]
+    [InlineData("Default")]
+    public async Task GetRoomMessages(string roomName) {
+        AuthenticateAs("MarioB", "Password123@!");
 
-        var handler = new JwtSecurityTokenHandler();
-        var jwtToken = handler.ReadJwtToken(token);
+        Room room = new Room {
+            Name = roomName
+        };
 
-        foreach(var claim in jwtToken.Claims) {
-            Console.WriteLine($"{claim.Type}: {claim.Value}");
-        }
+        room.Messages = new List<Message> {
+            new Message {Body = "Mensaje1", User = _authenticatedUser},
+            new Message {Body = "Mensaje2", User = _authenticatedUser},
+            new Message {Body = "Mensaje3", User = _authenticatedUser},
+        };
+
+        _context.Rooms.Add(room);
+        await _context.SaveChangesAsync();
+
+        var response = await _client.GetAsync($"/api/rooms/{roomName}/messages");
+        response.EnsureSuccessStatusCode();
+
+        var responseData = await GetResponseContent<RoomMessagesResponseDto>(response);
+
+        Assert.NotEmpty(responseData.Messages);
     }
 }

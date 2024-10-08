@@ -25,3 +25,30 @@ export async function sendMessageRequest(message: string): Promise<boolean> {
 
     return true;
 }
+
+export async function getRoomMessages(roomName: string): Promise<Message[]> {
+    const sessionStore = useSessionStore();
+    if (!sessionStore) {
+        console.error("No Session detected");
+        return [];
+    }
+
+    const token = sessionStore.$state.user?.token;
+    const response = await request(`/rooms/${roomName}/messages`, 'GET', null, {
+        'Authorization': `Bearer ${token}`
+    });
+
+    if (response == null) {
+        return [];
+    }
+
+    // return response.map((message: Message) => message);
+    return response.messages;
+}
+
+export interface Message {
+    id: number,
+    user: string,
+    createdAt: string,
+    message: string
+}

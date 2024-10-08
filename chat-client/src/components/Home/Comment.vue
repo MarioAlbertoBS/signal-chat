@@ -4,14 +4,10 @@
     const message = ref('');
 
     async function sendMessage(_event: Event) {
-        console.log(message.value);
-
         if(!await sendMessageRequest(message.value)) {
             alert("Error sending the message.");
             return;
         }
-        
-        alert(message.value);
 
         message.value = '';
     }

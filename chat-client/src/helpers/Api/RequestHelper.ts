@@ -1,6 +1,6 @@
 const baseUrl = 'http://localhost:5000/api';
 
-async function request(url: string, method: string = 'GET', body: string = '', headers = {}) {
+async function request(url: string, method: string = 'GET', body: string|null = null, headers = {}) {
     try {
         const response = await fetch(baseUrl.concat(url), {
             method: method,

@@ -9,8 +9,7 @@
     "test": "dotnet test",
     "docker-build": "docker-compose up --build -d",
     "docker-run": "docker-compose up -d",
-    "docker-rebuild-api": "docker-compose build app && docker-compose restart app",
-    "docker-rebuild-client": "docker-compose build client && docker-compose restart client",
+    "docker-rebuild-client": "docker-compose up --build -d client",
     "seed": "dotnet run --connection-string \"Server=localhost,1433;Database=Chat;User=sa;Password=DevelpmentP@ssword!;TrustServerCertificate=True;\" seed",
     "client-build": "cd chat-client && npm run build"
   },

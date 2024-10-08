@@ -52,7 +52,14 @@ public class MessageController : ControllerBase
                 throw new Exception("Cannot store message in database");
             }
 
-            await _messageService.SendMessageAsync(message.Room.Id.ToString(), message.Body);
+            MessageResponseDto messageResponse = new MessageResponseDto {
+                Id = message.Id,
+                Message = message.Body,
+                User = message.User.UserName,
+                CreatedAt = message.SentAt.ToString("yyyy-MM-dd HH:mm:ss"),
+            };
+
+            await _messageService.SendMessageAsync(message.Room.Id.ToString(), messageResponse);
         } catch(Exception ex) {
             Console.WriteLine(ex.Message);
             return StatusCode(StatusCodes.Status500InternalServerError, "Error sending the message.");
