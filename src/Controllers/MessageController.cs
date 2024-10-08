@@ -40,7 +40,7 @@ public class MessageController : ControllerBase
         
         var user = await _userManager.FindByIdAsync(userId);
 
-        var room = await _roomRepository.Get(messageRequestDto.RoomId.ToString());
+        var room = await _roomRepository.Get(messageRequestDto.RoomId);
 
         if (room == null) {
             return NotFound(new {message = "Room Not Found"});

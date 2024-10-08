@@ -40,12 +40,25 @@ builder.Services.AddAuthentication(options => {
 
 builder.Services.AddSignalR();
 
+// Add CORS for development
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("http://localhost:5001")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader()
+                          .AllowCredentials()
+    );
+});
+
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<RoomRepository>();
 builder.Services.AddScoped<MessageRepository>();
 
 var app = builder.Build();
+
+// Use CORS Policies
+app.UseCors("AllowSpecificOrigin");
 
 // Run seeder
 if (args.Contains("seed")) {
@@ -65,12 +78,6 @@ if (args.Contains("seed")) {
 
     return;
 }
-
-// Migrate database
-// using (var scope = app.Services.CreateScope()) {
-//     var dbContext = scope.ServiceProvider.GetRequiredService<ChatContext>();
-//     dbContext.Database.Migrate();
-// }
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -5,7 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Docker Containers",
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to Client",
+            "port": 9229,
+            "restart": false,
+            "protocol": "inspector",
+            "address": "localhost",
+            "localRoot": "${workspaceFolder}/chat-client",
+            "remoteRoot": "/app",
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "name": "Attach to API",
             "type": "docker",
             "request": "attach",
             "platform": "netCore",

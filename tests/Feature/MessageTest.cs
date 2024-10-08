@@ -12,8 +12,8 @@ public class MessageTest : Test
     public MessageTest(TestApplicationFactory factory) : base(factory) {}
 
     [Theory]
-    [InlineData("MarioB", "Password123!", "Hello World!", 1)]
-    public async Task TestSendMessage(string userName, string password, string message, int roomId) {
+    [InlineData("MarioB", "Password123!", "Hello World!", "1")]
+    public async Task TestSendMessage(string userName, string password, string message, string roomId) {
         string token = await GenerateLoginToken(userName, password);
 
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);

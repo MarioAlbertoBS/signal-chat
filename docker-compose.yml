@@ -14,6 +14,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
+    networks:
+      - api-network
+      - database-network
 
   client:
     build:
@@ -21,10 +24,13 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - "5001:80"
+      - "9229:9229"
     volumes:
       - ./chat-client/dist:/usr/share/nginx/html
     depends_on:
       - app
+    networks:
+      - api-network
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -35,6 +41,8 @@ services:
       - "1433:1433"
     volumes:
       - sqlserver-data:/var/opt/mssql
+    networks:
+      - database-network
 
   migration:
     build:
@@ -42,6 +50,14 @@ services:
       dockerfile: Dockerfile.migrations
     depends_on:
       - sqlserver
+    networks:
+      - database-network
 
 volumes:
   sqlserver-data:
+
+networks:
+  api-network:
+    driver: bridge
+  database-network:
+    driver: bridge

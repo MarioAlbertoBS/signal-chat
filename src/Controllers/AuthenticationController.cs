@@ -46,7 +46,7 @@ public class AuthenticationController : ControllerBase
         
         try {
             string token = await _jwtService.LoginAsync(userLoginDto.UserName, userLoginDto.Password);
-            return Ok(new { token = token });
+            return Ok(new { token = token, id = user.Id, username = user.UserName });
         } catch (Exception ex) {
             return BadRequest(new { message = "Cannot Login, check the user exists and the password is correct!" });
         }
