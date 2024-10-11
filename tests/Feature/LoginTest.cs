@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
@@ -57,5 +58,29 @@ public class LoginTest : Test
         HttpResponseMessage response = await _client.PostAsync("/api/login", content);
 
         response.EnsureSuccessStatusCode();
+    }
+
+    [Theory]
+    [InlineData("MarioB", "Password123@!")]
+    public async Task TestValidateToken(string userName, string password) {
+        string token = await GenerateLoginToken(userName, password);
+
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        HttpResponseMessage response = await _client.GetAsync("api/validate-token");
+
+        response.EnsureSuccessStatusCode();
+    }
+
+    [Theory]
+    [InlineData("MarioB", "Password123@!")]
+    public async Task TestValidateTokenInvalid(string userName, string password) {
+        string token = await GenerateLoginToken(userName, password);
+
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "InvalidToken");
+
+        HttpResponseMessage response = await _client.GetAsync("api/validate-token");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 }

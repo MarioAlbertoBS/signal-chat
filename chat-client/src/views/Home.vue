@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { ref, onMounted } from 'vue';
     import { useRouter } from 'vue-router';
-    import { logoutUser } from '../helpers/AuthenticationHelper';
+    import { logoutUser, validateToken } from '../helpers/AuthenticationHelper';
     import { getRoomMessages, Message } from '../helpers/Api/MessageRequestHelper';
     import ChatHistory from '../components/Home/ChatHistory.vue';
     import Header from '../components/Home/Header.vue';
@@ -41,7 +41,14 @@
         }).catch(err => console.error(err.toString()));
     }
 
-    onMounted(() => {
+    onMounted(async () => {
+        if(!await validateToken()) {
+            router.push({name: 'Login'});
+            console.error("Token Invalid, redirecting to login");
+            return;
+        }
+
+        console.log("Token Valid");
         connectChatHub();
         loadHistory();
     });

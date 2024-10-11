@@ -1,4 +1,4 @@
-import request from "./RequestHelper";
+import requestWithBody from "./RequestHelper";
 import useSessionStore from "../../stores/useSessionStore";
 
 export const defaultRoom: string = '38fbece8-4f64-4329-95e6-f73672d6fc2c';
@@ -12,7 +12,7 @@ export async function sendMessageRequest(message: string): Promise<boolean> {
     }
 
     const token = sessionStore.$state.user?.token;
-    const messageResponse = await request('/messages', 'POST', JSON.stringify({
+    const messageResponse = await requestWithBody('/messages', 'POST', JSON.stringify({
         message: message,
         roomId: defaultRoom
     }), {
@@ -34,7 +34,7 @@ export async function getRoomMessages(roomName: string): Promise<Message[]> {
     }
 
     const token = sessionStore.$state.user?.token;
-    const response = await request(`/rooms/${roomName}/messages`, 'GET', null, {
+    const response = await requestWithBody(`/rooms/${roomName}/messages`, 'GET', null, {
         'Authorization': `Bearer ${token}`
     });
 

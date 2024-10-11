@@ -1,8 +1,8 @@
 import { UserData } from "../../stores/useSessionStore";
-import request from './RequestHelper';
+import requestWithBody from './RequestHelper';
 
 export async function loginRequest(username: string, password: string): Promise<UserData | null> {
-    const responseBody = await request('/login', 'POST', JSON.stringify({
+    const responseBody = await requestWithBody('/login', 'POST', JSON.stringify({
         userName: username,
         password: password
     }));
@@ -15,7 +15,7 @@ export async function loginRequest(username: string, password: string): Promise<
 }
 
 export async function registerRequest(username: string, password: string): Promise<boolean> {
-    const responseBody = await request('/register', 'POST', JSON.stringify({
+    const responseBody = await requestWithBody('/register', 'POST', JSON.stringify({
         userName: username,
         password: password
     }));

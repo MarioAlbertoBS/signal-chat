@@ -7,6 +7,7 @@ using Chat.Data;
 using Chat.Data.Dtos;
 using Chat.Models;
 using Chat.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -50,5 +51,11 @@ public class AuthenticationController : ControllerBase
         } catch (Exception ex) {
             return BadRequest(new { message = "Cannot Login, check the user exists and the password is correct!" });
         }
+    }
+
+    [HttpGet("validate-token")]
+    [Authorize]
+    public async Task<IActionResult> ValidateToken() {
+        return Ok();
     }
 }

@@ -1,6 +1,6 @@
 const baseUrl = 'http://localhost:5000/api';
 
-async function request(url: string, method: string = 'GET', body: string|null = null, headers = {}) {
+export async function makeRequest(url: string, method: string = 'GET', body: string|null = null, headers = {}) {
     try {
         const response = await fetch(baseUrl.concat(url), {
             method: method,
@@ -11,7 +11,7 @@ async function request(url: string, method: string = 'GET', body: string|null = 
             body: body
         });
 
-        return await response.json();
+        return response;
     } catch (error) {
         console.error(error);
     }
@@ -19,4 +19,16 @@ async function request(url: string, method: string = 'GET', body: string|null = 
     return null;
 }
 
-export default request;
+async function requestWithBody(url: string, method: string = 'GET', body: string|null = null, headers = {}) {
+    try {
+        const response = await makeRequest(url, method, body, headers);
+
+        return await response?.json();
+    } catch (error) {
+        console.error(error);
+    }
+
+    return null;
+}
+
+export default requestWithBody;

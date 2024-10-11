@@ -1,4 +1,7 @@
 import { defineStore } from 'pinia';
+import * as crypto from 'crypto-ts';
+
+const secretKey = 'secret';
 
 const useSessionStore = defineStore('session', {
     state: () => { 
@@ -7,7 +10,8 @@ const useSessionStore = defineStore('session', {
 
         const storedData = localStorage.getItem("userData");
         if(storedData) {
-            userData = JSON.parse(storedData);
+            const decryptedData = crypto.AES.decrypt(storedData, secretKey);
+            userData = JSON.parse(decryptedData.toString(crypto.enc.Utf8));
             isAuthenticated = true;
         }
 
@@ -18,12 +22,18 @@ const useSessionStore = defineStore('session', {
     },
     actions: {
         login(userData: UserData | null) {
-            this.isAuthenticated = true,
-            this.user = userData
+            this.isAuthenticated = true;
+            this.user = userData;
+
+            const cypherText = crypto.AES.encrypt(JSON.stringify(userData), secretKey);
+
+            localStorage.setItem("userData", cypherText.toString());
         },
         logout() {
-            this.isAuthenticated = false,
-            this.user = null
+            this.isAuthenticated = false;
+            this.user = null;
+
+            localStorage.removeItem("userData");
         }
     }
 })
