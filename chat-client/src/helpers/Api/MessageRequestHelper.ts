@@ -1,7 +1,7 @@
 import requestWithBody from "./RequestHelper";
 import useSessionStore from "../../stores/useSessionStore";
 
-export const defaultRoom: string = '38fbece8-4f64-4329-95e6-f73672d6fc2c';
+export const defaultRoom: string = 'Default';
 
 export async function sendMessageRequest(message: string): Promise<boolean> {
     

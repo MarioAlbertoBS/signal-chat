@@ -23,10 +23,15 @@ services:
       context: ./chat-client
       dockerfile: ./Dockerfile
     ports:
-      - "5001:80"
+      - "3000:3000"
       - "9229:9229"
+    environment:
+      - VITE_APP_MODE=development
+      - VITE_APP_PORT=3000
+      - NODE_ENV=development
     volumes:
-      - ./chat-client/dist:/usr/share/nginx/html
+      - ./chat-client:/app
+      - /app/node_modules
     depends_on:
       - app
     networks:

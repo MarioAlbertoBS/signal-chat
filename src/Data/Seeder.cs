@@ -11,6 +11,7 @@ public class Seeder
 
         if (!defaultRoomExists) {
             Room room = new Room {
+                Id = "Default",
                 Name = "Default"
             };
 

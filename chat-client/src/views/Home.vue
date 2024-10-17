@@ -36,7 +36,7 @@
         connection.start().then(function() {
             console.log("Connected to ChatHub");
 
-            connection.invoke("JoinRoom", "38fbece8-4f64-4329-95e6-f73672d6fc2c")
+            connection.invoke("JoinRoom", "Default")
                 .catch(err => console.error(err));
         }).catch(err => console.error(err.toString()));
     }
