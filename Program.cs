@@ -98,7 +98,8 @@ app.MapControllerRoute(
 )
 .WithOpenApi();
 
-app.MapHub<ChatHub>("/chatHub");
+app.MapHub<ChatHub>("/chatHub")
+    .RequireCors("AllowSpecificOrigin");
 
 app.Run();
 
