@@ -41,7 +41,7 @@ builder.Services.AddAuthentication(options => {
 builder.Services.AddSignalR();
 
 // Add CORS for development
-string[] allowedHosts = builder.Configuration.GetSection("Cors:AllowedHosts").Get<string[]>() ?? [];
+var allowedHosts = builder.Configuration.GetSection("Cors:AllowedHosts").Get<string[]>();
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowSpecificOrigin",
         builder => builder.WithOrigins(allowedHosts)
